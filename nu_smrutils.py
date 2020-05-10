@@ -12,17 +12,37 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import DataLoader, TensorDataset
 
-###############
+#%%
 def loaddat(filename):
-    """Loads pickle file
+    """This function allows to load pickle data
+
+    Arguments:
+        filename {[pickle]} -- [description]
+
+    Returns:
+        [pickle] -- [description]
     """
+    
     with open(filename, 'rb') as handle:
         data = pickle.load(handle)
     return data
 
-###############
-def get_data_loaders(dat, batch_size, EEGNET = None):    
+#%%
+def get_data_loaders(dat, batch_size, EEGNET = None):
+    """[summary]
+
+    Arguments:
+        dat {[type]} -- [description]
+        batch_size {[type]} -- [description]
+
+    Keyword Arguments:
+        EEGNET {[type]} -- [description] (default: {None})
+
+    Returns:
+        [type] -- [description]
+    """       
     # convert data dimensions to into to gray scale image format
+    
     if EEGNET: ### EEGNet model requires the last dimension to be 1 
         ff = lambda dat: torch.unsqueeze(dat, dim = -1)    
     else:
@@ -91,8 +111,8 @@ class SKStandardScaler(TransformerMixin):
         if len(X.shape) >= 2:
             X = X.reshape(-1, *self._orig_shape)
         return X
-###############
 
+###############
 def load_pooled(data, subjectIndex, class_name,
                 normalize=True, test_size=0.15):
     """
@@ -137,7 +157,8 @@ def load_pooled(data, subjectIndex, class_name,
 
     # get the labels and construct data array from all subjects
     X = np.concatenate([s1pos, s1neg])
-    Y = np.concatenate([np.ones(s1pos.shape[0]), np.zeros(s1neg.shape[0])])
+    Y = np.concatenate([np.ones(s1pos.shape[0]), 
+                        np.zeros(s1neg.shape[0])])
 
     # normalization
     if normalize:
@@ -160,11 +181,10 @@ def load_pooled(data, subjectIndex, class_name,
     return dict(xtrain=X_train, xvalid=X_valid, xtest=X_test,
                 ytrain=y_train, yvalid=y_valid, ytest=y_test)
 
-
 ###############
 def subject_specific(data, subjectIndex, class_name,
-                     normalize=True, test_size=0.15):
-    """
+                     normalize=True, test_size=0.15):       
+    """ 
     Creates a list of subject-specific EEG data with a  
     [Xtrain, Xvalid, Xtest] from a list of MNE objects.        .          
 
